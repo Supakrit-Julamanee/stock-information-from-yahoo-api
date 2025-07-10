@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -12,29 +11,31 @@ import {
 } from "recharts";
 import Navbar from "./components/navbar";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { ChartDataPoint, PercentageChange, YahooFinanceResult } from "./type";
 
 export default function Home() {
-  const [stockData, setStockData] = useState<any>(null);
+  const [stockData, setStockData] = useState<YahooFinanceResult | null>(null);
 
-  const formatChartData = () => {
-    if (!stockData?.timestamp || !stockData?.indicators?.quote?.[0]?.close)
+  const formatChartData = (): ChartDataPoint[] => {
+    if (!stockData?.timestamp || !stockData?.indicators?.quote?.[0]?.close) {
       return [];
+    }
 
     return stockData.timestamp
       .map((ts: number, index: number) => ({
         date: new Date(ts * 1000).toLocaleDateString(),
-        close: stockData.indicators.quote[0].close[index],
+        close: stockData.indicators.quote[0].close[index] as number,
       }))
-      .filter((item: any) => item.close !== null);
+      .filter((item): item is ChartDataPoint => item.close !== null);
   };
 
-  // Calculate percentage change between current price and 52-week high
-  const calculatePercentageChange = () => {
+  const calculatePercentageChange = (): PercentageChange | null => {
     if (
       !stockData?.meta?.regularMarketPrice ||
       !stockData?.meta?.fiftyTwoWeekHigh
-    )
+    ) {
       return null;
+    }
 
     const currentPrice = stockData.meta.regularMarketPrice;
     const high52Week = stockData.meta.fiftyTwoWeekHigh;
@@ -47,6 +48,7 @@ export default function Home() {
   };
 
   const percentageChange = calculatePercentageChange();
+  const chartData = formatChartData();
 
   return (
     <>
@@ -55,7 +57,6 @@ export default function Home() {
       <div className="container mx-auto gap-4 mt-4">
         {stockData && (
           <>
-            {/* Percentage Change Banner */}
             {percentageChange && (
               <Card className="mb-4">
                 <CardHeader>
@@ -78,14 +79,13 @@ export default function Home() {
             )}
 
             <div className="flex flex-col md:flex-row gap-4">
-              {/* Chart */}
               <Card className="md:w-1/2 w-full">
                 <CardHeader>
                   <CardTitle>Price Chart</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={formatChartData()}>
+                    <LineChart data={chartData}>
                       <XAxis dataKey="date" tick={{ fontSize: 10 }} />
                       <YAxis domain={["auto", "auto"]} />
                       <Tooltip />
@@ -101,7 +101,6 @@ export default function Home() {
                 </CardContent>
               </Card>
 
-              {/* Stock Info Table */}
               <Card className="md:w-1/2 w-full">
                 <CardHeader>
                   <CardTitle>Stock Information</CardTitle>

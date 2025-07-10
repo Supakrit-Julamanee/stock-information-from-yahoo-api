@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { FormField, FormItem, FormControl, Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -8,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { fetchStock } from "../action";
 import { z } from "zod";
 import { Search } from "lucide-react";
+import { YahooFinanceResult } from "../type";
 
 const formSchema = z.object({
   symbol: z.string().min(1, "Stock symbol is required"),
@@ -16,7 +16,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 interface NavbarProps {
-  setStockData: (data: any) => void;
+  setStockData: (data: YahooFinanceResult | null) => void;
 }
 
 export default function Navbar({ setStockData }: NavbarProps) {
@@ -28,9 +28,13 @@ export default function Navbar({ setStockData }: NavbarProps) {
   });
 
   const handleGetData = async (data: FormData) => {
-    const result = await fetchStock(data.symbol);
-    console.log("Stock Price Data:", result);
-    setStockData(result.chart?.result?.[0]);
+    try {
+      const result = await fetchStock(data.symbol);
+      setStockData(result.chart.result[0]);
+    } catch (error) {
+      console.error("Error fetching stock data:", error);
+      setStockData(null);
+    }
   };
 
   return (
@@ -40,7 +44,6 @@ export default function Navbar({ setStockData }: NavbarProps) {
           USA Stock
         </h1>
 
-        {/* Form must wrap both input and button */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleGetData)} className="flex gap-2">
             <FormField
