@@ -4,10 +4,14 @@ import { FormField, FormItem, FormControl, Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { fetchStock } from "../action";
 import { z } from "zod";
 import { Search } from "lucide-react";
-import { YahooFinanceResult } from "../type";
+import {
+  YahooFinanceChartResponse,
+  YahooFinanceResult,
+} from "../types/yahoo-chart";
+import { fetchChart, fetchDetail } from "../action";
+import { StockSummary } from "../types/yahoo-finance";
 
 const formSchema = z.object({
   symbol: z.string().min(1, "Stock symbol is required"),
@@ -16,10 +20,11 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 interface NavbarProps {
-  setStockData: (data: YahooFinanceResult | null) => void;
+  setChart: (data: YahooFinanceChartResponse | null) => void;
+  setDetail: (data: StockSummary | null) => void;
 }
 
-export default function Navbar({ setStockData }: NavbarProps) {
+export default function Navbar({ setDetail, setChart }: NavbarProps) {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -29,11 +34,15 @@ export default function Navbar({ setStockData }: NavbarProps) {
 
   const handleGetData = async (data: FormData) => {
     try {
-      const result = await fetchStock(data.symbol);
-      setStockData(result.chart.result[0]);
+      const detail = await fetchDetail(data.symbol);
+      setDetail(detail);
+
+      const chart = await fetchChart(data.symbol);
+      setChart(chart);
     } catch (error) {
       console.error("Error fetching stock data:", error);
-      setStockData(null);
+      setDetail(null);
+      setChart(null);
     }
   };
 
@@ -41,11 +50,14 @@ export default function Navbar({ setStockData }: NavbarProps) {
     <header className="w-full border-b bg-white shadow-sm dark:bg-gray-900">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <h1 className="text-lg font-semibold text-blue-600 dark:text-white">
-          USA Stock
+          Stock Information From Yahoo Api
         </h1>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleGetData)} className="flex gap-2">
+          <form
+            onSubmit={form.handleSubmit(handleGetData)}
+            className="flex gap-2"
+          >
             <FormField
               control={form.control}
               name="symbol"
@@ -58,7 +70,7 @@ export default function Navbar({ setStockData }: NavbarProps) {
               )}
             />
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              <Search/>
+              <Search />
             </Button>
           </form>
         </Form>
