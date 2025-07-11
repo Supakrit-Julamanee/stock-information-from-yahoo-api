@@ -5,17 +5,17 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { YahooFinanceMeta } from "../../types/yahoo-chart";
 
 const metaTranslations: Record<string, { th: string; en: string }> = {
-  currency: { th: "สกุลเงิน", en: "Currency" },
-  symbol: { th: "สัญลักษณ์", en: "Symbol" },
-  exchangeName: { th: "ชื่อตลาด", en: "Exchange" },
-  regularMarketPrice: { th: "ราคาปัจจุบัน", en: "Current Price" },
-  previousClose: { th: "ราคาปิดก่อนหน้า", en: "Previous Close" },
-  regularMarketDayHigh: { th: "สูงสุดประจำวัน", en: "Day High" },
-  regularMarketDayLow: { th: "ต่ำสุดประจำวัน", en: "Day Low" },
-  regularMarketVolume: { th: "ปริมาณซื้อขาย", en: "Volume" },
-  fiftyTwoWeekHigh: { th: "สูงสุด 52 สัปดาห์", en: "52-Week High" },
-  fiftyTwoWeekLow: { th: "ต่ำสุด 52 สัปดาห์", en: "52-Week Low" },
-  longName: { th: "ชื่อเต็ม", en: "Full Name" },
+  longName: { th: "ชื่อบริษัท", en: "Company Name" },
+  symbol: { th: "สัญลักษณ์หุ้น", en: "Ticker Symbol" },
+  exchangeName: { th: "ตลาดหลักทรัพย์", en: "Stock Exchange" },
+  currency: { th: "สกุลเงินที่ใช้ซื้อขาย", en: "Trading Currency" },
+  regularMarketPrice: { th: "ราคาซื้อขายล่าสุด", en: "Last Traded Price" },
+  previousClose: { th: "ราคาปิดวันก่อนหน้า", en: "Previous Closing Price" },
+  regularMarketDayHigh: { th: "ราคาสูงสุดวันนี้", en: "Intraday High" },
+  regularMarketDayLow: { th: "ราคาต่ำสุดวันนี้", en: "Intraday Low" },
+  fiftyTwoWeekHigh: { th: "ราคาสูงสุดในรอบ 52 สัปดาห์", en: "52-Week High" },
+  fiftyTwoWeekLow: { th: "ราคาต่ำสุดในรอบ 52 สัปดาห์", en: "52-Week Low" },
+  regularMarketVolume: { th: "ปริมาณการซื้อขาย (หุ้น)", en: "Trading Volume (Shares)" },
 };
 
 type StockMetaCardProps = {
