@@ -8,7 +8,6 @@ import { z } from "zod";
 import { Search } from "lucide-react";
 import {
   YahooFinanceChartResponse,
-  YahooFinanceResult,
 } from "../types/yahoo-chart";
 import { fetchChart, fetchDetail } from "../action";
 import { StockSummary } from "../types/yahoo-finance";

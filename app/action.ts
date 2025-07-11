@@ -1,6 +1,5 @@
   'use server';
 
-  import { resourceLimits } from "worker_threads";
   import { YahooFinanceChartResponse } from "./types/yahoo-chart";
   import yahooFinance from 'yahoo-finance2';
   import { StockSummary } from "./types/yahoo-finance";

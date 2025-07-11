@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { YahooFinanceMeta } from "../../types/yahoo-chart";
 
-// Bilingual translations for essential YahooFinanceMeta keys
 const metaTranslations: Record<string, { th: string; en: string }> = {
   currency: { th: "สกุลเงิน", en: "Currency" },
   symbol: { th: "สัญลักษณ์", en: "Symbol" },
@@ -23,10 +22,6 @@ type StockMetaCardProps = {
   meta: YahooFinanceMeta;
 };
 
-const formatNumber = (value: number | undefined): string => {
-  if (value === undefined) return "N/A";
-  return value.toLocaleString();
-};
 
 export function StockMetaTable({ meta }: StockMetaCardProps) {
   // Define the essential fields we want to display in order
