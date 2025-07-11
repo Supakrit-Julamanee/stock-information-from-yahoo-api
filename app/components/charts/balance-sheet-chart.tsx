@@ -24,8 +24,8 @@ export default function BalanceSheetChart({ data }: Props) {
 
   const chartData = history.map((item) => ({
     date: item.endDate.getFullYear(),
-    totalAssets: item.totalAssets,
-    totalLiabilities: item.totalLiab,
+    // totalAssets: item.totalAssets,
+    // totalLiabilities: item.totalLiab,
   }));
 
   return (

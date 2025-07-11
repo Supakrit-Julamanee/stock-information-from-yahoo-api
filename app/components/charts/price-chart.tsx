@@ -1,6 +1,6 @@
-// components/price-chart.tsx
 "use client";
 
+import { ChartDataPoint, YahooFinanceChartResponse } from "@/app/types/yahoo-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   LineChart,
@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { YahooFinanceChartResponse, ChartDataPoint } from "../types/yahoo-chart";
+import { ArrowUp, ArrowDown } from "lucide-react";
 
 type Props = {
   chart: YahooFinanceChartResponse;
@@ -32,11 +32,27 @@ export default function PriceChart({ chart }: Props) {
   };
 
   const chartData = formatChartData();
+  
+  // Get current price and 52-week high from meta data
+  const meta = chart.chart.result[0].meta;
+  const currentPrice = meta.regularMarketPrice;
+  const fiftyTwoWeekHigh = meta.fiftyTwoWeekHigh;
+  
+  // Calculate percentage change
+  const percentageChange = ((currentPrice - fiftyTwoWeekHigh) / fiftyTwoWeekHigh) * 100;
+  const isPositive = percentageChange >= 0;
+  const formattedPercentage = Math.abs(percentageChange).toFixed(2) + '%';
 
   return (
-    <Card className="md:w-1/2 w-full">
+    <Card className="w-1/2">
       <CardHeader>
-        <CardTitle>Price Chart</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          Price Chart
+          <span className={`inline-flex items-center text-sm font-medium ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
+            {isPositive ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+            {formattedPercentage} from 52W High
+          </span>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>

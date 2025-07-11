@@ -37,8 +37,12 @@ export default function Navbar({ setDetail, setChart }: NavbarProps) {
       const detail = await fetchDetail(data.symbol);
       setDetail(detail);
 
+      console.log(detail)
+
+
       const chart = await fetchChart(data.symbol);
       setChart(chart);
+
     } catch (error) {
       console.error("Error fetching stock data:", error);
       setDetail(null);

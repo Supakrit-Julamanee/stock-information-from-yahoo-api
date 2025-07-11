@@ -15,21 +15,22 @@ type Props = {
   data: StockSummary;
 };
 
-export default function IncomeStatementChart({ data }: Props) {
-  const history = data.incomeStatementHistory?.incomeStatementHistory;
+export default function CashFlowChart({ data }: Props) {
+  const history = data.cashflowStatementHistory?.cashflowStatements;
 
   if (!history) return null;
 
   const chartData = history.map((item) => ({
     date: item.endDate.getFullYear(),
-    revenue: item.totalRevenue,
-    netIncome: item.netIncome,
-  })).reverse();
+    // operating: item.totalCashFromOperatingActivities,
+    // investing: item.totalCashflowsFromInvestingActivities,
+    // financing: item.totalCashFromFinancingActivities,
+  }));
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Income Statement</CardTitle>
+        <CardTitle>Cash Flow</CardTitle>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -37,8 +38,9 @@ export default function IncomeStatementChart({ data }: Props) {
             <XAxis dataKey="date" />
             <YAxis />
             <Tooltip />
-            <Bar dataKey="revenue" fill="#3b82f6" name="Revenue" />
-            <Bar dataKey="netIncome" fill="#10b981" name="Net Income" />
+            <Bar dataKey="operating" fill="#22c55e" name="Operating" />
+            <Bar dataKey="investing" fill="#0ea5e9" name="Investing" />
+            <Bar dataKey="financing" fill="#ef4444" name="Financing" />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

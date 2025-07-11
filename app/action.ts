@@ -34,7 +34,8 @@
       ],
     });
 
-    console.log(result)
+    console.log('case')
+    console.log(result.cashflowStatementHistory?.cashflowStatements[0])
 
 
     return result as unknown as StockSummary;
