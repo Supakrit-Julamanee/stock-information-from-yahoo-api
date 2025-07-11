@@ -27,7 +27,7 @@ export default function IncomeStatementChart({ data }: Props) {
   })).reverse();
 
   return (
-    <Card className="w-1/2" >
+    <Card  >
       <CardHeader>
         <CardTitle>Income Statement</CardTitle>
       </CardHeader>
