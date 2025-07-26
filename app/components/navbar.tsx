@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Search } from "lucide-react";
+import { Search, Home, List } from "lucide-react";
+import Link from "next/link";
 import { YahooFinanceChartResponse } from "../types/yahoo-chart";
 import { fetchChart, fetchDetail } from "../action";
 import { StockSummary } from "../types/yahoo-finance";
@@ -47,9 +48,28 @@ export default function Navbar({ setDetail, setChart }: NavbarProps) {
     <header className="w-full border-b bg-white shadow-sm dark:bg-gray-900">
       <div className="container mx-auto px-4 py-3">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <h1 className="text-lg font-semibold text-blue-600 dark:text-white whitespace-nowrap">
-            Stock Information
-          </h1>
+          <div className="flex items-center gap-6">
+            <h1 className="text-lg font-semibold text-blue-600 dark:text-white whitespace-nowrap">
+              Stock Information
+            </h1>
+            
+            <nav className="hidden md:flex items-center gap-4">
+              <Link 
+                href="/" 
+                className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+              >
+                <Home className="h-4 w-4" />
+                Home
+              </Link>
+              <Link 
+                href="/list" 
+                className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+              >
+                <List className="h-4 w-4" />
+                NASDAQ 100
+              </Link>
+            </nav>
+          </div>
 
           <Form {...form}>
             <form
@@ -83,6 +103,24 @@ export default function Navbar({ setDetail, setChart }: NavbarProps) {
             </form>
           </Form>
         </div>
+        
+        {/* Mobile navigation */}
+        <nav className="md:hidden flex items-center gap-4 mt-3 pt-3 border-t">
+          <Link 
+            href="/" 
+            className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+          >
+            <Home className="h-4 w-4" />
+            Home
+          </Link>
+          <Link 
+            href="/list" 
+            className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+          >
+            <List className="h-4 w-4" />
+            NASDAQ 100
+          </Link>
+        </nav>
       </div>
     </header>
   );
