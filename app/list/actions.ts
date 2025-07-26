@@ -25,9 +25,11 @@ async function fetchPopularStockSymbols(): Promise<string[]> {
         
         // Extract symbols from the response
         if (Array.isArray(data) && data.length > 0) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const symbols = data.map((item: any) => {
             // Handle different possible data structures
             return item.symbol || item.Symbol || item.ticker || item;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           }).filter((symbol: any) => typeof symbol === 'string' && symbol.length > 0);
           
           if (symbols.length > 50) {

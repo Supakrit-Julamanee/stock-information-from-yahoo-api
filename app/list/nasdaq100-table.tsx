@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
+import { ArrowUpDown, TrendingUp, DollarSign } from "lucide-react";
 import { fetchNasdaq100Data } from "./actions";
 
 export interface Nasdaq100Stock {
