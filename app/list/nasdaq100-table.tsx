@@ -106,9 +106,9 @@ export function Nasdaq100Table() {
           <CardTitle>กำลังโหลดข้อมูลหุ้น...</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-3">
             {Array.from({ length: 40 }).map((_, i) => (
-              <Skeleton key={i} className="h-24 w-full" />
+              <Skeleton key={i} className="h-28 w-full" />
             ))}
           </div>
         </CardContent>
@@ -135,21 +135,24 @@ export function Nasdaq100Table() {
     <Card>
       <CardHeader>
         <CardTitle>Stock Market Heatmap</CardTitle>
-        <p className="text-sm text-gray-600">
-          ข้อมูลราคาหุ้นยอดนิยมแสดงในรูปแบบ Heatmap (ดึงข้อมูลแบบไดนามิกจาก Yahoo Finance)<br />
-          <span className="text-xs">
+        <div className="space-y-2">
+          <p className="text-sm text-gray-600">
+            ข้อมูลราคาหุ้นยอดนิยมแสดงในรูปแบบ Heatmap (ดึงข้อมูลแบบไดนามิกจาก Yahoo Finance)
+          </p>
+          <p className="text-xs text-gray-500">
             * สีเขียว = ใกล้จุดสูงสุด 52 สัปดาห์ | สีเหลือง = ปานกลาง | สีแดง = ต่ำกว่าจุดสูงสุดมาก
-          </span>
-        </p>
-        <div className="flex items-center justify-between mt-4">
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-4 gap-3">
           <p className="text-sm text-gray-500">
             แสดงทั้งหมด {allStocks.length} รายการ
           </p>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Button
               variant={sortBy === 'none' ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleSortChange('none')}
+              className="w-full sm:w-auto"
             >
               <ArrowUpDown className="h-4 w-4 mr-1" />
               Original
@@ -158,6 +161,7 @@ export function Nasdaq100Table() {
               variant={sortBy === 'changePercent' ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleSortChange('changePercent')}
+              className="w-full sm:w-auto"
             >
               <TrendingUp className="h-4 w-4 mr-1" />
               % Change
@@ -166,6 +170,7 @@ export function Nasdaq100Table() {
               variant={sortBy === 'marketCap' ? 'default' : 'outline'}
               size="sm"
               onClick={() => handleSortChange('marketCap')}
+              className="w-full sm:w-auto"
             >
               <DollarSign className="h-4 w-4 mr-1" />
               Market Cap
@@ -174,31 +179,31 @@ export function Nasdaq100Table() {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-3">
           {sortedStocks.map((stock, index) => (
             <div 
               key={stock.symbol} 
-              className={`p-3 rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-lg cursor-pointer relative ${getIntensiveHeatmapColor(stock.changePercent)}`}
+              className={`p-4 sm:p-3 rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-lg cursor-pointer relative min-h-[120px] sm:min-h-[100px] ${getIntensiveHeatmapColor(stock.changePercent)}`}
               title={`${stock.name}\nCurrent: ${formatCurrency(stock.currentPrice)}\n52W High: ${formatCurrency(stock.fiftyTwoWeekHigh)}\nChange: ${formatPercent(stock.changePercent)}${stock.marketCap ? `\nMarket Cap: ${formatMarketCap(stock.marketCap)}` : ''}`}
             >
               {/* Sort ranking indicator */}
               {sortBy !== 'none' && (
-                <div className="absolute -top-1 -left-1 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                <div className="absolute -top-1 -left-1 bg-blue-600 text-white text-xs rounded-full w-6 h-6 sm:w-5 sm:h-5 flex items-center justify-center font-bold">
                   {index + 1}
                 </div>
               )}
               
               <div className="text-center">
-                <div className="font-bold text-sm mb-1">{stock.symbol}</div>
-                <div className="text-xs opacity-90 mb-1">
+                <div className="font-bold text-base sm:text-sm mb-2 sm:mb-1">{stock.symbol}</div>
+                <div className="text-sm sm:text-xs opacity-90 mb-2 sm:mb-1">
                   {formatCurrency(stock.currentPrice)}
                 </div>
                 {sortBy === 'marketCap' && stock.marketCap ? (
-                  <div className="text-xs font-semibold">
+                  <div className="text-sm sm:text-xs font-semibold">
                     {formatMarketCap(stock.marketCap)}
                   </div>
                 ) : (
-                  <div className="text-xs font-semibold">
+                  <div className="text-sm sm:text-xs font-semibold">
                     {formatPercent(stock.changePercent)}
                   </div>
                 )}
@@ -216,37 +221,37 @@ export function Nasdaq100Table() {
         {/* Color Legend */}
         <div className="mt-6 p-4 bg-gray-50 rounded-lg">
           <h4 className="text-sm font-semibold mb-3">Color Legend (% from 52-Week High)</h4>
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-2 text-xs">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-green-600 rounded"></div>
+              <div className="w-5 h-5 sm:w-4 sm:h-4 bg-green-600 rounded flex-shrink-0"></div>
               <span>0% to -2%</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-green-500 rounded"></div>
+              <div className="w-5 h-5 sm:w-4 sm:h-4 bg-green-500 rounded flex-shrink-0"></div>
               <span>-2% to -5%</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-green-400 rounded"></div>
+              <div className="w-5 h-5 sm:w-4 sm:h-4 bg-green-400 rounded flex-shrink-0"></div>
               <span>-5% to -10%</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+              <div className="w-5 h-5 sm:w-4 sm:h-4 bg-yellow-500 rounded flex-shrink-0"></div>
               <span>-10% to -15%</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-orange-400 rounded"></div>
+              <div className="w-5 h-5 sm:w-4 sm:h-4 bg-orange-400 rounded flex-shrink-0"></div>
               <span>-15% to -25%</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-orange-500 rounded"></div>
+              <div className="w-5 h-5 sm:w-4 sm:h-4 bg-orange-500 rounded flex-shrink-0"></div>
               <span>-25% to -35%</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-red-500 rounded"></div>
+              <div className="w-5 h-5 sm:w-4 sm:h-4 bg-red-500 rounded flex-shrink-0"></div>
               <span>-35% to -50%</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 bg-red-700 rounded"></div>
+              <div className="w-5 h-5 sm:w-4 sm:h-4 bg-red-700 rounded flex-shrink-0"></div>
               <span>Below -50%</span>
             </div>
           </div>
