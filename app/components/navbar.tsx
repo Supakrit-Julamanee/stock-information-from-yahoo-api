@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Search, Home, List } from "lucide-react";
+import { Search, Home, List, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { YahooFinanceChartResponse } from "../types/yahoo-chart";
 import { fetchChart, fetchDetail } from "../action";
@@ -62,11 +62,18 @@ export default function Navbar({ setDetail, setChart }: NavbarProps) {
                 Home
               </Link>
               <Link 
-                href="/list" 
+                href="/groups/nasdaq-100" 
                 className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
               >
                 <List className="h-4 w-4" />
                 NASDAQ 100
+              </Link>
+              <Link 
+                href="/groups/s-and-p-500" 
+                className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+              >
+                <TrendingUp className="h-4 w-4" />
+                S&P 500
               </Link>
             </nav>
           </div>
@@ -105,20 +112,27 @@ export default function Navbar({ setDetail, setChart }: NavbarProps) {
         </div>
         
         {/* Mobile navigation */}
-        <nav className="md:hidden flex items-center gap-4 mt-3 pt-3 border-t">
+        <nav className="md:hidden flex items-center gap-4 mt-3 pt-3 border-t overflow-x-auto">
           <Link 
             href="/" 
-            className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+            className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap"
           >
             <Home className="h-4 w-4" />
             Home
           </Link>
           <Link 
-            href="/list" 
-            className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+            href="/groups/nasdaq-100" 
+            className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap"
           >
             <List className="h-4 w-4" />
             NASDAQ 100
+          </Link>
+          <Link 
+            href="/groups/s-and-p-500" 
+            className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors whitespace-nowrap"
+          >
+            <TrendingUp className="h-4 w-4" />
+            S&P 500
           </Link>
         </nav>
       </div>

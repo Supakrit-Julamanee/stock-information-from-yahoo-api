@@ -22,7 +22,6 @@ type StockMetaCardProps = {
   meta: YahooFinanceMeta;
 };
 
-
 export function StockMetaTable({ meta }: StockMetaCardProps) {
   // Define the essential fields we want to display in order
   const essentialFields = [
@@ -39,47 +38,69 @@ export function StockMetaTable({ meta }: StockMetaCardProps) {
     "regularMarketVolume",
   ];
 
+  const formatValue = (value: any): string => {
+    if (typeof value === "number") {
+      // Format large numbers with commas
+      return value.toLocaleString();
+    }
+    if (typeof value === "string" || typeof value === "boolean") {
+      return value.toString();
+    }
+    if (Array.isArray(value)) {
+      return JSON.stringify(value);
+    }
+    if (value !== undefined && value !== null) {
+      return JSON.stringify(value);
+    }
+    return "N/A";
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          ข้อมูลพื้นฐาน / Basic Information
-          <span className="ml-4 text-xs">
-            {new Date(meta.regularMarketTime * 1000).toLocaleString()}
-          </span>
+    <Card className="h-full">
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base sm:text-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <span>Basic Information</span>
+            <span className="text-xs sm:text-sm font-normal text-gray-500">
+              {new Date(meta.regularMarketTime * 1000).toLocaleString("en-US", {
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+              })}
+            </span>
+          </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="h-80 overflow-y-auto">
-        <Table>
-          <TableBody>
-            {essentialFields.map((key) => {
-              const value = meta[key as keyof YahooFinanceMeta];
-              const translation = metaTranslations[key] || { th: key, en: key };
+      <CardContent className="px-3 sm:px-6">
+        <div className="max-h-80 overflow-y-auto">
+          <Table>
+            <TableBody>
+              {essentialFields.map((key) => {
+                const value = meta[key as keyof YahooFinanceMeta];
+                const translation = metaTranslations[key] || { th: key, en: key };
 
-              return (
-                <TableRow key={key}>
-                  <TableCell className="font-medium">
-                    {translation.th} <br />
-                    <span className="text-xs text-gray-500">
-                      {translation.en}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    {typeof value === "string" || typeof value === "number"
-                      ? value
-                      : Array.isArray(value)
-                        ? JSON.stringify(value)
-                        : typeof value === "boolean"
-                          ? value.toString()
-                          : value !== undefined && value !== null
-                            ? JSON.stringify(value)
-                            : "N/A"}
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+                return (
+                  <TableRow key={key} className="border-b border-gray-100">
+                    <TableCell className="py-3 px-2 sm:px-4 align-top">
+                      <div className="font-medium text-sm text-gray-900">
+                        {translation.en}
+                      </div>
+                      <div className="text-xs text-gray-500 mt-0.5 hidden sm:block">
+                        {translation.th}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-3 px-2 sm:px-4 text-right align-top">
+                      <div className="text-sm font-semibold text-gray-900 break-words">
+                        {formatValue(value)}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );
