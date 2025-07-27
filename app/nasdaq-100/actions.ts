@@ -3,15 +3,6 @@
 import yahooFinance from 'yahoo-finance2';
 import { Nasdaq100Stock } from './nasdaq100-table';
 
-// Fallback list of popular stocks in case API fails
-const FALLBACK_POPULAR_STOCKS = [
-  'AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA', 'TSLA', 'META', 'AVGO', 'ORCL', 'COST',
-  'NFLX', 'ADBE', 'PEP', 'AMD', 'QCOM', 'INTC', 'CMCSA', 'TXN', 'AMGN', 'HON',
-  'GILD', 'INTU', 'BKNG', 'ISRG', 'VRTX', 'REGN', 'MDLZ', 'ADP', 'MELI', 'KLAC',
-  'LRCX', 'CSX', 'SBUX', 'MRVL', 'CRWD', 'FTNT', 'ADSK', 'ASML', 'NXPI', 'ABNB',
-  'WDAY', 'MAR', 'CHTR', 'CPRT', 'FANG', 'PAYX', 'MNST', 'AEP', 'FAST', 'ROST'
-];
-
 // Function to fetch popular/trending stock symbols dynamically
 async function fetchPopularStockSymbols(): Promise<string[]> {
   try {
@@ -30,7 +21,7 @@ async function fetchPopularStockSymbols(): Promise<string[]> {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         }).filter((symbol: any) => typeof symbol === 'string' && symbol.length > 0);
         
-        if (symbols.length > 50) {
+        if (symbols.length > 0) {
           return symbols;
         }
       }
@@ -39,7 +30,7 @@ async function fetchPopularStockSymbols(): Promise<string[]> {
     console.warn('Failed to fetch from index-constituents:', error);
   }
 
-  return FALLBACK_POPULAR_STOCKS;
+  throw new Error('ไม่สามารถดึงรายชื่อหุ้นได้ กรุณาลองใหม่อีกครั้ง');
 }
 
 export async function fetchNasdaq100Data(): Promise<Nasdaq100Stock[]> {
