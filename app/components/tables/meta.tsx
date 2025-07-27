@@ -38,6 +38,7 @@ export function StockMetaTable({ meta }: StockMetaCardProps) {
     "regularMarketVolume",
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formatValue = (value: any): string => {
     if (typeof value === "number") {
       // Format large numbers with commas
