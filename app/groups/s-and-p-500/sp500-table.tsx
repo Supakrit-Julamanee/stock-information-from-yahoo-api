@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, TrendingUp, DollarSign, Filter } from "lucide-react";
+import { ArrowUpDown, TrendingUp, DollarSign, Filter, RefreshCw } from "lucide-react";
 import { fetchSP500Data } from "./actions";
 
 export interface SP500Stock {
@@ -28,12 +28,18 @@ export function SP500Table() {
   const [error, setError] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<SortOption>('none');
   const [changeRateFilter, setChangeRateFilter] = useState<ChangeRateFilter>('all');
+  const [loadingProgress, setLoadingProgress] = useState<string>("กำลังโหลดข้อมูล...");
 
   useEffect(() => {
-    async function loadData() {
+    async function loadData(retryCount = 0) {
       try {
         setLoading(true);
+        setError(null);
+        setLoadingProgress("กำลังทดสอบการเชื่อมต่อ API...");
+        
         const data = await fetchSP500Data();
+        
+        setLoadingProgress("กำลังประมวลผลข้อมูล...");
         // Calculate daily change percentage
         const dataWithDailyChange = data.map(stock => ({
           ...stock,
@@ -43,9 +49,23 @@ export function SP500Table() {
         }));
         setAllStocks(dataWithDailyChange);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการโหลดข้อมูล");
+        console.error("Error loading S&P 500 data:", err);
+        const errorMessage = err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการโหลดข้อมูล";
+        
+        // Retry up to 2 times with exponential backoff
+        if (retryCount < 2) {
+          console.log(`Retrying... Attempt ${retryCount + 1}`);
+          setLoadingProgress(`กำลังลองใหม่อีกครั้ง... (ครั้งที่ ${retryCount + 1})`);
+          setTimeout(() => {
+            loadData(retryCount + 1);
+          }, Math.pow(2, retryCount) * 1000); // 1s, 2s delays
+          return;
+        }
+        
+        setError(errorMessage);
       } finally {
         setLoading(false);
+        setLoadingProgress("");
       }
     }
 
@@ -143,6 +163,26 @@ export function SP500Table() {
     setChangeRateFilter(newFilter);
   };
 
+  const handleRefresh = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await fetchSP500Data();
+      const dataWithDailyChange = data.map(stock => ({
+        ...stock,
+        dailyChangePercent: stock.previousClose > 0 
+          ? ((stock.currentPrice - stock.previousClose) / stock.previousClose) * 100 
+          : 0
+      }));
+      setAllStocks(dataWithDailyChange);
+    } catch (err) {
+      console.error("Error refreshing data:", err);
+      setError(err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการโหลดข้อมูล");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getFilterLabel = (filter: ChangeRateFilter) => {
     switch (filter) {
       case 'green-100': return 'At/Near High (0% to -2%)';
@@ -162,6 +202,9 @@ export function SP500Table() {
       <Card>
         <CardHeader>
           <CardTitle>กำลังโหลดข้อมูลหุ้น S&P 500...</CardTitle>
+          {loadingProgress && (
+            <p className="text-sm text-gray-600">{loadingProgress}</p>
+          )}
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -181,7 +224,56 @@ export function SP500Table() {
           <CardTitle className="text-red-600">เกิดข้อผิดพลาด</CardTitle>
         </CardHeader>
         <CardContent>
-          <p>{error}</p>
+          <div className="space-y-4">
+            <p className="text-gray-700">{error}</p>
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => {
+                  setError(null);
+                  setLoading(true);
+                  // Trigger a reload
+                  window.location.reload();
+                }}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                ลองใหม่อีกครั้ง
+              </Button>
+              <Button 
+                variant="outline"
+                onClick={() => {
+                  setError(null);
+                  setLoading(true);
+                  // Use fallback data
+                  const fallbackStocks: SP500Stock[] = [
+                    {
+                      symbol: "AAPL",
+                      name: "Apple Inc.",
+                      currentPrice: 150.00,
+                      fiftyTwoWeekHigh: 200.00,
+                      changePercent: -25.00,
+                      previousClose: 148.00,
+                      marketCap: 2500000000000,
+                      dailyChangePercent: 1.35
+                    },
+                    {
+                      symbol: "MSFT",
+                      name: "Microsoft Corporation",
+                      currentPrice: 300.00,
+                      fiftyTwoWeekHigh: 350.00,
+                      changePercent: -14.29,
+                      previousClose: 298.00,
+                      marketCap: 2200000000000,
+                      dailyChangePercent: 0.67
+                    }
+                  ];
+                  setAllStocks(fallbackStocks);
+                  setLoading(false);
+                }}
+              >
+                แสดงข้อมูลตัวอย่าง
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
     );
@@ -192,7 +284,19 @@ export function SP500Table() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>S&P 500 Heatmap Table</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>S&P 500 Heatmap Table</CardTitle>
+          <Button
+            onClick={handleRefresh}
+            disabled={loading}
+            variant="outline"
+            size="sm"
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+            รีเฟรช
+          </Button>
+        </div>
         <div className="space-y-2">
           <p className="text-sm text-gray-600">
             ข้อมูลราคาหุ้น S&P 500 แสดงในรูปแบบ Heatmap Table (ดึงข้อมูลแบบไดนามิกจาก Yahoo Finance)
